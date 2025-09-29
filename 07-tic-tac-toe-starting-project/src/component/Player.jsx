@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Player({ initalName, symbol }) {
+export default function Player({ initalName, symbol, isActive, onChangeName }) {
   const [isEditing, setIsEditing] = useState(false);
   const [playerName, setPlayerName] = useState(initalName);
 
@@ -22,11 +22,20 @@ export default function Player({ initalName, symbol }) {
     //  So if two line of updating the state written side by side,
     //  react will not be able to correctly update state.
 
-    setIsEditing((editing) => !editing);
-
     // other way is to pass function to update state
     // the function will automatically be called by React
     // and receive the guaranteed latest state value
+
+    setIsEditing((editing) => !editing);
+    if (isEditing) {
+      onChangeName(symbol, playerName);
+    }
+    // here we're passing the latest value of isEditing to the function
+    // and react will call this function with the latest value of isEditing
+    // and we don't have to worry about stale state value
+    //  because react will always call this function with the latest state value
+    //  so, we can safely use the previous state value to compute the new state value
+    //  without worrying about stale state value
   }
 
   function handleChange(event) {
@@ -35,7 +44,7 @@ export default function Player({ initalName, symbol }) {
   }
 
   return (
-    <li>
+    <li className={isActive ? "active" : undefined}>
       <span className="player">
         {editablePlayerName}
         <span className="player-symbol">{symbol}</span>
